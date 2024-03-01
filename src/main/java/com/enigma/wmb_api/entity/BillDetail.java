@@ -31,10 +31,10 @@ public class BillDetail {
     private Menu menu;
 
     @Column(name = "qty", nullable = false)
-    private float qty;
+    private Integer qty;
 
     @Column(name = "price", nullable = false, updatable = false)
-    private float price;
+    private Integer price;
 
 }
 

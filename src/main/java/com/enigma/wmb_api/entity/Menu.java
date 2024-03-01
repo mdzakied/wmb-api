@@ -22,6 +22,6 @@ public class Menu {
     private String name;
 
     @Column(name = "price", nullable = false)
-    private Float price;
+    private Integer price;
 
 }
