@@ -89,6 +89,7 @@ public class MenuController {
                 .body(response);
     }
 
+    // Get Menu by Id
     @GetMapping(path = "/{id}")
     public ResponseEntity<CommonResponse<Menu>> getMenuById(
             @PathVariable String id
@@ -109,11 +110,12 @@ public class MenuController {
                 .body(response);
     }
 
+    // Update Menu
     @PutMapping
     public ResponseEntity<CommonResponse<Menu>> updateMenu(
             @RequestBody PutMenuRequest putMenuRequest
     ) {
-        // Edit Menu to Service
+        // Update Menu to Service
         Menu menu = menuService.update(putMenuRequest);
 
         // Common Response
@@ -129,6 +131,7 @@ public class MenuController {
                 .body(menuCommonResponse);
     }
 
+    // Delete Menu by Id
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<Menu>> deleteMenuById(
             @PathVariable String id
