@@ -11,8 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = ConstantTable.CUSTOMER)
-public class Customer {
+@Table(name = ConstantTable.USER)
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
