@@ -26,6 +26,39 @@ public class MenuSpecification {
 
             }
 
+            // Search by Price
+            if (searchMenuRequest.getPrice() != null) {
+                Predicate pricePredicate = criteriaBuilder.equal(
+                        root.get("price"),
+                        searchMenuRequest.getPrice()
+                );
+
+                predicates.add(pricePredicate);
+
+            }
+
+            // Search by Min Price
+            if (searchMenuRequest.getMinPrice() != null) {
+                Predicate minPricePredicate = criteriaBuilder.greaterThanOrEqualTo(
+                        root.get("price"),
+                        searchMenuRequest.getMinPrice()
+                );
+
+                predicates.add(minPricePredicate);
+
+            }
+
+            // Search by Max Price
+            if (searchMenuRequest.getMaxPrice() != null) {
+                Predicate maxPricePredicate = criteriaBuilder.lessThanOrEqualTo(
+                        root.get("price"),
+                        searchMenuRequest.getMaxPrice()
+                );
+
+                predicates.add(maxPricePredicate);
+
+            }
+
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };
     }

@@ -48,6 +48,9 @@ public class MenuController {
     @GetMapping
     public ResponseEntity<CommonResponse<List<Menu>>> getAllMenu (
             @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "price", required = false) Integer price,
+            @RequestParam(name = "minPrice", required = false) Integer minPrice,
+            @RequestParam(name = "maxPrice", required = false) Integer maxprice,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String soryBy,
@@ -56,6 +59,9 @@ public class MenuController {
         // Query Params & Pagination to SearchMenuRequest
         SearchMenuRequest searchMenuRequest = SearchMenuRequest.builder()
                 .name(name)
+                .price(price)
+                .minPrice(minPrice)
+                .maxPrice(maxprice)
                 .page(page)
                 .size(size)
                 .sortBy(soryBy)
