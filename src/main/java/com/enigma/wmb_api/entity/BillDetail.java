@@ -21,7 +21,7 @@ public class BillDetail {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JsonBackReference
     @JoinColumn(name = "bill_id", nullable = false, updatable = false)
     private Bill bill;

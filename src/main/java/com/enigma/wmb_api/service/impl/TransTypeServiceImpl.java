@@ -1,5 +1,6 @@
 package com.enigma.wmb_api.service.impl;
 
+import com.enigma.wmb_api.constant.TransTypeEnum;
 import com.enigma.wmb_api.entity.TransType;
 import com.enigma.wmb_api.repositry.TransTypeRepository;
 import com.enigma.wmb_api.service.TransTypeService;
@@ -15,15 +16,7 @@ public class TransTypeServiceImpl implements TransTypeService {
 
     @Override
     public TransType getById(String id) {
-        return findByIdOrThrowNotFound(id);
+        return transTypeRepository.findByTransTypeEnum(TransTypeEnum.valueOf(id));
     }
 
-    public TransType findByIdOrThrowNotFound(String id){
-        return transTypeRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "trans type not available"
-                )
-        );
-    }
 }
