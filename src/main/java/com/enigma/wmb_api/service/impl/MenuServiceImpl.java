@@ -40,11 +40,12 @@ public class MenuServiceImpl implements MenuService {
         // Validate postMenuRequest
         validationUtil.validate(postMenuRequest);
 
-        // Conditional Image is Empty
-        if (postMenuRequest.getImage().isEmpty() || postMenuRequest.getImage() == null) throw new ConstraintViolationException("image is required", null);
-
-        // Image Response from Service
-        Image image = imageService.create(postMenuRequest.getImage());
+        // Conditional Edit Menu -> Image
+        Image image = null;
+        if (postMenuRequest.getImage() != null && !postMenuRequest.getImage().isEmpty()) {
+            // Create Image
+            image = imageService.create(postMenuRequest.getImage());
+        }
 
         // Create Menu
         Menu menu = Menu.builder()
@@ -160,22 +161,21 @@ public class MenuServiceImpl implements MenuService {
 
     // Convert to Response Menu Service
     public MenuResponse convertToMenuResponse(Menu menu) {
-        if (menu.getImage() != null){
-            return MenuResponse.builder()
-                    .id(menu.getId())
-                    .name(menu.getName())
-                    .price(menu.getPrice())
-                    .image(ImageResponse.builder()
-                            .url(APIUrl.PRODUCT_IMAGE_DOWNLOAD_API + menu.getImage().getId())
-                            .name(menu.getImage().getName())
-                            .build())
-                    .build();
-        } else {
-            return MenuResponse.builder()
-                    .id(menu.getId())
-                    .name(menu.getName())
-                    .price(menu.getPrice())
+        // Response Image
+        ImageResponse imageResponse = null;
+        if (menu.getImage() != null) {
+            imageResponse = ImageResponse.builder()
+                    .url(APIUrl.PRODUCT_IMAGE_DOWNLOAD_API + menu.getImage().getId())
+                    .name(menu.getImage().getName())
                     .build();
         }
+
+        // Menu Response
+        return MenuResponse.builder()
+                .id(menu.getId())
+                .name(menu.getName())
+                .price(menu.getPrice())
+                .image(imageResponse)
+                .build();
     }
 }

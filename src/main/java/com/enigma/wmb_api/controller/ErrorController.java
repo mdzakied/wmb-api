@@ -66,7 +66,13 @@ public class ErrorController {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity handleMaxSizeException(MaxUploadSizeExceededException exc) {
-        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("File too large!");
+    public ResponseEntity handleMaxSizeException(MaxUploadSizeExceededException e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(String.valueOf(LocalDateTime.now()))
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                .body(response);
     }
 }

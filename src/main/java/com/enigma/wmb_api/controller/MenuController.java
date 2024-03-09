@@ -36,7 +36,7 @@ public class MenuController {
     )
     public ResponseEntity<CommonResponse<MenuResponse>> createMenu(
             @RequestPart (name = "menu") String jsonMenu,
-            @RequestPart (name = "image") MultipartFile image
+            @RequestPart (name = "image", required = false) MultipartFile image
     ) {
         // Common Response
         CommonResponse.CommonResponseBuilder<MenuResponse> responseBuilder = CommonResponse.builder();
@@ -161,7 +161,6 @@ public class MenuController {
 
             // Set Image
             putMenuRequest.setImage(image);
-
 
             // Menu Response from update Service
             MenuResponse menuResponse = menuService.update(putMenuRequest);
