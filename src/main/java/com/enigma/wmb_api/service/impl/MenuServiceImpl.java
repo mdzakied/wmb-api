@@ -1,15 +1,20 @@
 package com.enigma.wmb_api.service.impl;
 
+import com.enigma.wmb_api.constant.APIUrl;
 import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.menu.PostMenuRequest;
 import com.enigma.wmb_api.dto.request.menu.PutMenuRequest;
 import com.enigma.wmb_api.dto.request.menu.SearchMenuRequest;
+import com.enigma.wmb_api.dto.response.ImageResponse;
 import com.enigma.wmb_api.dto.response.MenuResponse;
+import com.enigma.wmb_api.entity.Image;
 import com.enigma.wmb_api.entity.Menu;
 import com.enigma.wmb_api.repositry.MenuRepository;
+import com.enigma.wmb_api.service.ImageService;
 import com.enigma.wmb_api.service.MenuService;
 import com.enigma.wmb_api.specification.MenuSpecification;
 import com.enigma.wmb_api.util.ValidationUtil;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final ValidationUtil validationUtil;
+    private final ImageService imageService;
 
     // Create Menu Service
     @Transactional(rollbackFor = Exception.class)
@@ -34,10 +40,17 @@ public class MenuServiceImpl implements MenuService {
         // Validate postMenuRequest
         validationUtil.validate(postMenuRequest);
 
+        // Conditional Image is Empty
+        if (postMenuRequest.getImage().isEmpty() || postMenuRequest.getImage() == null) throw new ConstraintViolationException("image is required", null);
+
+        // Image Response from Service
+        Image image = imageService.create(postMenuRequest.getImage());
+
         // Create Menu
         Menu menu = Menu.builder()
                 .name(postMenuRequest.getName())
                 .price(postMenuRequest.getPrice())
+                .image(image)
                 .build();
 
         // Save to Repository
@@ -97,11 +110,22 @@ public class MenuServiceImpl implements MenuService {
         // Get by Id
         Menu currentMenu = getById(putMenuRequest.getId());
 
+        // Conditional Edit Menu -> Image
+        Image image = currentMenu.getImage();
+        if (putMenuRequest.getImage() != null && !putMenuRequest.getImage().isEmpty()) {
+            // Create Image
+            image = imageService.create(putMenuRequest.getImage());
+
+            // Delete Current Image
+            imageService.deleteById(currentMenu.getImage().getId());
+        }
+
         // Create Menu
         Menu menu = Menu.builder()
                 .id(currentMenu.getId())
                 .name(putMenuRequest.getName())
                 .price(putMenuRequest.getPrice())
+                .image(image)
                 .build();
 
         // Save to Repository
@@ -136,10 +160,22 @@ public class MenuServiceImpl implements MenuService {
 
     // Convert to Response Menu Service
     public MenuResponse convertToMenuResponse(Menu menu) {
-        return MenuResponse.builder()
-                .id(menu.getId())
-                .name(menu.getName())
-                .price(menu.getPrice())
-                .build();
+        if (menu.getImage() != null){
+            return MenuResponse.builder()
+                    .id(menu.getId())
+                    .name(menu.getName())
+                    .price(menu.getPrice())
+                    .image(ImageResponse.builder()
+                            .url(APIUrl.PRODUCT_IMAGE_DOWNLOAD_API + menu.getImage().getId())
+                            .name(menu.getImage().getName())
+                            .build())
+                    .build();
+        } else {
+            return MenuResponse.builder()
+                    .id(menu.getId())
+                    .name(menu.getName())
+                    .price(menu.getPrice())
+                    .build();
+        }
     }
 }

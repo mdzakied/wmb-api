@@ -10,12 +10,15 @@ import com.enigma.wmb_api.dto.response.common.CommonResponse;
 import com.enigma.wmb_api.dto.response.common.CommonResponsePage;
 import com.enigma.wmb_api.dto.response.common.PagingResponse;
 import com.enigma.wmb_api.service.MenuService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,29 +27,43 @@ import java.util.List;
 @RequestMapping(path = APIUrl.MENU_API)
 public class MenuController {
     private final MenuService menuService;
+    private final ObjectMapper objectMapper;
 
     // Create Menu Controller
     @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<CommonResponse<MenuResponse>> createMenu(
-            @RequestBody PostMenuRequest postMenuRequest
+            @RequestPart (name = "menu") String jsonMenu,
+            @RequestPart (name = "image") MultipartFile image
     ) {
-        // Menu Response from crate Service
-        MenuResponse menuResponse = menuService.create(postMenuRequest);
-
         // Common Response
-        CommonResponse<MenuResponse> menuCommonResponse = CommonResponse.<MenuResponse>builder()
-                .statusCode(HttpStatus.CREATED.value())
-                .message(ResponseMessage.SUCCESS_SAVE_DATA)
-                .data(menuResponse)
-                .build();
+        CommonResponse.CommonResponseBuilder<MenuResponse> responseBuilder = CommonResponse.builder();
 
-        // Response Entity
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(menuCommonResponse);
+        try {
+            // Object Mapper postMenuRequest
+            PostMenuRequest postMenuRequest = objectMapper.readValue(jsonMenu, new TypeReference<>() {});
+
+            // Set Image
+            postMenuRequest.setImage(image);
+
+            // Menu Response from crate Service
+            MenuResponse menuResponse = menuService.create(postMenuRequest);
+
+            responseBuilder.statusCode(HttpStatus.CREATED.value());
+            responseBuilder.message(ResponseMessage.SUCCESS_SAVE_DATA);
+            responseBuilder.data(menuResponse);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(responseBuilder.build());
+        } catch (Exception e) {
+            responseBuilder.message(ResponseMessage.ERROR_INTERNAL_SERVER);
+            responseBuilder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(responseBuilder.build());
+        }
     }
 
     // Get All Menu Controller
@@ -128,26 +145,40 @@ public class MenuController {
 
     // Update Menu Controller
     @PutMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(
-            @RequestBody PutMenuRequest putMenuRequest
+            @RequestPart (name = "menu") String jsonMenu,
+            @RequestPart (name = "image", required = false) MultipartFile image
     ) {
-        // Menu Response from update Service
-        MenuResponse menuResponse = menuService.update(putMenuRequest);
-
         // Common Response
-        CommonResponse<MenuResponse> menuCommonResponse = CommonResponse.<MenuResponse>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
-                .data(menuResponse)
-                .build();
+        CommonResponse.CommonResponseBuilder<MenuResponse> responseBuilder = CommonResponse.builder();
 
-        // Response Entity
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(menuCommonResponse);
+        try {
+            // Object Mapper postMenuRequest
+            PutMenuRequest putMenuRequest = objectMapper.readValue(jsonMenu, new TypeReference<>() {});
+
+            // Set Image
+            putMenuRequest.setImage(image);
+
+
+            // Menu Response from update Service
+            MenuResponse menuResponse = menuService.update(putMenuRequest);
+
+            responseBuilder.statusCode(HttpStatus.CREATED.value());
+            responseBuilder.message(ResponseMessage.SUCCESS_UPDATE_DATA);
+            responseBuilder.data(menuResponse);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(responseBuilder.build());
+        } catch (Exception e) {
+            responseBuilder.message(ResponseMessage.ERROR_INTERNAL_SERVER);
+            responseBuilder.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(responseBuilder.build());
+        }
     }
 
     // Delete Menu Controller
