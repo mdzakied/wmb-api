@@ -1,8 +1,10 @@
 package com.enigma.wmb_api.service.impl;
 
+import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.menu.PostMenuRequest;
 import com.enigma.wmb_api.dto.request.menu.PutMenuRequest;
 import com.enigma.wmb_api.dto.request.menu.SearchMenuRequest;
+import com.enigma.wmb_api.dto.response.MenuResponse;
 import com.enigma.wmb_api.entity.Menu;
 import com.enigma.wmb_api.repositry.MenuRepository;
 import com.enigma.wmb_api.service.MenuService;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -24,23 +27,32 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final ValidationUtil validationUtil;
 
+    // Create Menu Service
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Menu create(PostMenuRequest postMenuRequest) {
+    public MenuResponse create(PostMenuRequest postMenuRequest) {
         // Validate postMenuRequest
         validationUtil.validate(postMenuRequest);
 
+        // Create Menu
         Menu menu = Menu.builder()
                 .name(postMenuRequest.getName())
                 .price(postMenuRequest.getPrice())
                 .build();
 
-        return menuRepository.saveAndFlush(menu);
+        // Save to Repository
+        menuRepository.saveAndFlush(menu);
+
+        // Convert to Menu Response
+        return convertToMenuResponse(menu);
     }
 
+    // Get All Menu Service
+    @Transactional(readOnly = true)
     @Override
-    public Page<Menu> getAll(SearchMenuRequest searchMenuRequest) {
+    public Page<MenuResponse> getAll(SearchMenuRequest searchMenuRequest) {
         // Validate Page
-        if (searchMenuRequest.getPage() <=0) searchMenuRequest.setPage(1);
+        if (searchMenuRequest.getPage() <= 0) searchMenuRequest.setPage(1);
         // Sort
         Sort sort = Sort.by(Sort.Direction.fromString(searchMenuRequest.getDirection()), searchMenuRequest.getSortBy());
         // Pageable
@@ -48,45 +60,86 @@ public class MenuServiceImpl implements MenuService {
         // Specification
         Specification<Menu> specification = MenuSpecification.getSpecification(searchMenuRequest);
 
-        return menuRepository.findAll(specification, pageable);
+        // Find All Menu with Pageable
+        Page<Menu> menuPages = menuRepository.findAll(specification, pageable);
+
+        // Response Page
+        // Convert to Menu Response
+        return menuPages.map(this::convertToMenuResponse);
     }
 
+    // Get Menu By Id Service (return menuResponse)
+    @Transactional(readOnly = true)
+    @Override
+    public MenuResponse getOneById(String id) {
+        // Find by Id
+        Menu menu = findByIdOrThrowNotFound(id);
+
+        // Convert to Menu Response
+        return convertToMenuResponse(menu);
+    }
+
+    // Get Menu By Id Service (return menu)
+    @Transactional(readOnly = true)
     @Override
     public Menu getById(String id) {
+        // Find By id (return entity)
         return findByIdOrThrowNotFound(id);
     }
 
+    // Update Menu Service
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Menu update(PutMenuRequest putMenuRequest) {
+    public MenuResponse update(PutMenuRequest putMenuRequest) {
         // Validate putMenuRequest
         validationUtil.validate(putMenuRequest);
 
         // Get by Id
-        Menu menu = getById(putMenuRequest.getId());
+        Menu currentMenu = getById(putMenuRequest.getId());
 
-        Menu editedMenu = Menu.builder()
-                .id(menu.getId())
+        // Create Menu
+        Menu menu = Menu.builder()
+                .id(currentMenu.getId())
                 .name(putMenuRequest.getName())
                 .price(putMenuRequest.getPrice())
                 .build();
 
-        return menuRepository.saveAndFlush(editedMenu);
+        // Save to Repository
+        menuRepository.saveAndFlush(menu);
+
+        // Convert to Menu Response
+        return convertToMenuResponse(menu);
     }
 
+    // Delete Menu Service
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
         // Get by Id
         Menu menu = getById(id);
 
+        // Delete to Repository
         menuRepository.delete(menu);
     }
 
-    public Menu findByIdOrThrowNotFound(String id){
+    // Find Menu or Throw Error Service
+    @Transactional(readOnly = true)
+    public Menu findByIdOrThrowNotFound(String id) {
+        // Find By id throw error
         return menuRepository.findById(id).orElseThrow(() ->
-            new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "menu not found"
-            )
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        ResponseMessage.ERROR_NOT_FOUND
+                )
         );
+    }
+
+    // Convert to Response Menu Service
+    public MenuResponse convertToMenuResponse(Menu menu) {
+        return MenuResponse.builder()
+                .id(menu.getId())
+                .name(menu.getName())
+                .price(menu.getPrice())
+                .build();
     }
 }

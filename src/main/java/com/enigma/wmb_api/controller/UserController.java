@@ -1,16 +1,20 @@
 package com.enigma.wmb_api.controller;
 
-
 import com.enigma.wmb_api.constant.APIUrl;
+import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.user.PutUserRequest;
 import com.enigma.wmb_api.dto.request.user.SearchUserRequest;
+import com.enigma.wmb_api.dto.response.MenuResponse;
+import com.enigma.wmb_api.dto.response.UserResponse;
 import com.enigma.wmb_api.dto.response.common.CommonResponse;
+import com.enigma.wmb_api.dto.response.common.CommonResponsePage;
 import com.enigma.wmb_api.dto.response.common.PagingResponse;
 import com.enigma.wmb_api.entity.User;
 import com.enigma.wmb_api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +26,13 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    // Create User from Register User Account
+    // -- Create User from Register User Account --
 
-    // Get All User
-    @GetMapping
-    public ResponseEntity<CommonResponse<List<User>>> getAllUser (
+    // Get All User Controller
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponsePage<List<UserResponse>>> getAllUser (
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -44,24 +50,24 @@ public class UserController {
                 .direction(direction)
                 .build();
 
-        // Get All User to Service
-        Page<User> users = userService.getAll(searchUserRequest);
+        // Page All User Response from getAll Service
+        Page<UserResponse> userResponses = userService.getAll(searchUserRequest);
 
         // Paging Response for Common Response
         PagingResponse pagingResponse = PagingResponse.builder()
-                .totalPages(users.getTotalPages())
-                .totalElement(users.getTotalElements())
-                .page(users.getPageable().getPageNumber() + 1)
-                .size(users.getPageable().getPageSize())
-                .hasNext(users.hasNext())
-                .hasPrevious(users.hasPrevious())
+                .totalPages(userResponses.getTotalPages())
+                .totalElement(userResponses.getTotalElements())
+                .page(userResponses.getPageable().getPageNumber() + 1)
+                .size(userResponses.getPageable().getPageSize())
+                .hasNext(userResponses.hasNext())
+                .hasPrevious(userResponses.hasPrevious())
                 .build();
 
         // Common Response
-        CommonResponse<List<User>> response = CommonResponse.<List<User>>builder()
+        CommonResponsePage<List<UserResponse>> response = CommonResponsePage.<List<UserResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Success get all user")
-                .data(users.getContent())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(userResponses.getContent())
                 .paging(pagingResponse)
                 .build();
 
@@ -71,19 +77,22 @@ public class UserController {
                 .body(response);
     }
 
-    // Get User by Id
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<CommonResponse<User>> getUserById(
+    // Get User by Id Controller
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<UserResponse>> getUserById(
             @PathVariable String id
     ) {
-        // Get User by Id to Service
-        User user = userService.getById(id);
+        // User Response from getOneById service
+        UserResponse userResponse = userService.getOneById(id);
 
         // Common Response
-        CommonResponse<User> response = CommonResponse.<User>builder()
+        CommonResponse<UserResponse> response = CommonResponse.<UserResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfully get user by id")
-                .data(user)
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(userResponse)
                 .build();
 
         // Response Entity
@@ -92,19 +101,22 @@ public class UserController {
                 .body(response);
     }
 
-    // Update Menu
-    @PutMapping
-    public ResponseEntity<CommonResponse<User>> updateUser(
+    // Update Menu Controller
+    @PutMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<UserResponse>> updateUser(
             @RequestBody PutUserRequest putUserRequest
     ) {
-        // Update User to Service
-        User user = userService.update(putUserRequest);
+        // User Response from update Service
+        UserResponse userResponse = userService.update(putUserRequest);
 
         // Common Response
-        CommonResponse<User> userCommonResponse = CommonResponse.<User>builder()
+        CommonResponse<UserResponse> userCommonResponse = CommonResponse.<UserResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfully edit user")
-                .data(user)
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .data(userResponse)
                 .build();
 
         // Response Entity
@@ -113,19 +125,22 @@ public class UserController {
                 .body(userCommonResponse);
     }
 
-    // Delete User by Id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<User>> deleteUserById(
+    // Delete User Controller
+    @DeleteMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<UserResponse>> deleteUserById(
             @PathVariable String id
     ) {
 
-        // Delete User to Service
+        // User Response from delete Service
         userService.deleteById(id);
 
         // Common Response
-        CommonResponse<User> userCommonResponse = CommonResponse.<User>builder()
+        CommonResponse<UserResponse> userCommonResponse = CommonResponse.<UserResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfully delete user")
+                .message(ResponseMessage.SUCCESS_DELETE_DATA)
                 .build();
 
         // Response Entity

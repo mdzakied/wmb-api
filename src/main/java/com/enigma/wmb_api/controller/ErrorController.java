@@ -1,6 +1,7 @@
 package com.enigma.wmb_api.controller;
 
 import com.enigma.wmb_api.dto.response.common.CommonResponse;
+import com.enigma.wmb_api.dto.response.common.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -8,25 +9,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @RestControllerAdvice
 public class ErrorController {
     @ExceptionHandler({ResponseStatusException.class})
-    public ResponseEntity<CommonResponse<?>> responseStatusExceptionHandler (ResponseStatusException e) {
+    public ResponseEntity<ErrorResponse> responseStatusExceptionHandler (ResponseStatusException e) {
 
-        CommonResponse<?> response = CommonResponse.builder()
-                .statusCode(e.getStatusCode().value())
-                .message(e.getReason())
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(String.valueOf(LocalDateTime.now()))
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
                 .build();
-
-        return ResponseEntity
-                .status(e.getStatusCode())
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<CommonResponse<?>> constraintViolationExceptionHandler(ConstraintViolationException e){
-        CommonResponse<?> response = CommonResponse.builder()
+    public ResponseEntity<ErrorResponse> constraintViolationExceptionHandler(ConstraintViolationException e){
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(String.valueOf(LocalDateTime.now()))
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
                 .build();
@@ -35,8 +40,8 @@ public class ErrorController {
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})
-    public ResponseEntity<CommonResponse<?>> dataIntegrityViolationException (DataIntegrityViolationException e){
-        CommonResponse.CommonResponseBuilder<Object> builder = CommonResponse.builder();
+    public ResponseEntity<ErrorResponse> dataIntegrityViolationException (DataIntegrityViolationException e){
+        ErrorResponse.ErrorResponseBuilder builder = ErrorResponse.builder();
 
         HttpStatus httpStatus;
 

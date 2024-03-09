@@ -20,6 +20,6 @@ public class PutMenuRequest {
     private String name;
 
     @NotNull(message = "price is required")
-    @Min(value = 0, message = "price must be greater than or equal 0")
+    @Min(value = 1, message = "price must be greater than 1")
     private Integer price;
 }

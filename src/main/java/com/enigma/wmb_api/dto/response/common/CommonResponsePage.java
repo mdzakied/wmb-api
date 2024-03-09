@@ -7,8 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommonResponse<T> {
+public class CommonResponsePage<T> {
     private Integer statusCode;
     private String message;
     private T data;
+    private PagingResponse paging;
 }

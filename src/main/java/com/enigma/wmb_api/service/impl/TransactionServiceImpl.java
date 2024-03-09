@@ -1,5 +1,7 @@
 package com.enigma.wmb_api.service.impl;
 
+import com.enigma.wmb_api.constant.ResponseMessage;
+import com.enigma.wmb_api.constant.TransTypeEnum;
 import com.enigma.wmb_api.dto.request.transaction.PostTransactionRequest;
 import com.enigma.wmb_api.dto.request.transaction.SearchTransactionRequest;
 import com.enigma.wmb_api.dto.response.transaction.TableTransactionResponse;
@@ -38,6 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final MenuService menuService;
     private final ValidationUtil validationUtil;
 
+    // Create Transaction Service
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TransactionResponse create(PostTransactionRequest postTransactionRequest) {
@@ -51,11 +54,13 @@ public class TransactionServiceImpl implements TransactionService {
         // Get Table & Trans Type
         MTable table = null;
         TransType transType;
+        // Table not null -> Eat In
+        // Table null -> Take Away
         if (postTransactionRequest.getTableId() != null) {
             table = tableService.getById(postTransactionRequest.getTableId());
-            transType = transTypeService.getById("EI");
+            transType = transTypeService.getById(TransTypeEnum.EI.name());
         } else {
-            transType = transTypeService.getById("TA");
+            transType = transTypeService.getById(TransTypeEnum.TA.name());
         }
 
         // Create Transaction
@@ -68,7 +73,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Create Transaction Detail
         List<BillDetail> billDetails = postTransactionRequest.getTransactionDetails().stream()
-                .map(billDetail-> {
+                .map(billDetail -> {
                     // Get Menu
                     Menu menu = menuService.getById(billDetail.getMenuId());
 
@@ -80,6 +85,7 @@ public class TransactionServiceImpl implements TransactionService {
                             .price(billDetail.getQty() * menu.getPrice())
                             .build();
 
+                    // Save to Repository
                     transactionDetailRepository.saveAndFlush(newBillDetail);
 
                     return newBillDetail;
@@ -89,10 +95,12 @@ public class TransactionServiceImpl implements TransactionService {
         return convertToTransactionResponse(bill, billDetails);
     }
 
+    // Get All Transaction Service
+    @Transactional(readOnly = true)
     @Override
     public Page<TransactionResponse> getAll(SearchTransactionRequest searchTransactionRequest) {
         // Validate Page
-        if (searchTransactionRequest.getPage() <=0) searchTransactionRequest.setPage(1);
+        if (searchTransactionRequest.getPage() <= 0) searchTransactionRequest.setPage(1);
         // Sort
         Sort sort = Sort.by(Sort.Direction.fromString(searchTransactionRequest.getDirection()), searchTransactionRequest.getSortBy());
         // Pageable
@@ -103,35 +111,39 @@ public class TransactionServiceImpl implements TransactionService {
         // Find All Bill with Pageable
         Page<Bill> billPages = transactionRepository.findAll(specification, pageable);
 
-        // Response
-        Page<TransactionResponse> transactionResponsePages = billPages.map(
+        // Response Page
+        return billPages.map(
                 transactionResponsePage -> {
                     // Convert to Transaction Response
                     return convertToTransactionResponse(transactionResponsePage, transactionResponsePage.getBillDetails());
                 }
         );
-
-        return transactionResponsePages;
     }
 
+    // Get Transaction By Id Service
+    @Transactional(readOnly = true)
     @Override
     public TransactionResponse getOneById(String id) {
-            Bill bill = findByIdOrThrowNotFound(id);
-            List<BillDetail> billDetails = bill.getBillDetails();
+        // Find by Id
+        Bill bill = findByIdOrThrowNotFound(id);
+        List<BillDetail> billDetails = bill.getBillDetails();
 
-            return convertToTransactionResponse(bill, billDetails);
+        // Convert to Transaction Response
+        return convertToTransactionResponse(bill, billDetails);
     }
 
-    @Override
-    public Bill getById(String id) {
-        return findByIdOrThrowNotFound(id);
+    // Find Transaction or Throw Error Service
+    @Transactional(readOnly = true)
+    public Bill findByIdOrThrowNotFound(String id) {
+        // Find By id throw error
+        return transactionRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                ResponseMessage.ERROR_NOT_FOUND)
+        );
     }
 
-    public Bill findByIdOrThrowNotFound (String id) {
-        return transactionRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "transaction not found"));
-    }
-
-    public TransactionResponse convertToTransactionResponse(Bill bill, List<BillDetail>  billDetails){
+    // Convert Transaction to Response
+    public TransactionResponse convertToTransactionResponse(Bill bill, List<BillDetail> billDetails) {
 
         // Response Transaction Detail
         List<TransactionDetailResponse> transactionDetailResponses = billDetails.stream()
@@ -158,6 +170,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .name(bill.getUser().getName())
                 .phoneNumber(bill.getUser().getPhoneNumber())
                 .build();
+
         // Response Table Transaction
         TableTransactionResponse tableTransactionResponse = null;
         if (bill.getTable() != null) {
@@ -166,6 +179,7 @@ public class TransactionServiceImpl implements TransactionService {
                     .name(bill.getTable().getName())
                     .build();
         }
+
         // Response Trans Type Transaction
         TransTypeTransactionResponse transTypeTransactionResponse = TransTypeTransactionResponse.builder()
                 .id(bill.getTransType().getTransTypeEnum().name())

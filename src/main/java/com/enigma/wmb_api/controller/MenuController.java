@@ -1,17 +1,19 @@
 package com.enigma.wmb_api.controller;
 
-
 import com.enigma.wmb_api.constant.APIUrl;
+import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.menu.PostMenuRequest;
 import com.enigma.wmb_api.dto.request.menu.PutMenuRequest;
 import com.enigma.wmb_api.dto.request.menu.SearchMenuRequest;
+import com.enigma.wmb_api.dto.response.MenuResponse;
 import com.enigma.wmb_api.dto.response.common.CommonResponse;
+import com.enigma.wmb_api.dto.response.common.CommonResponsePage;
 import com.enigma.wmb_api.dto.response.common.PagingResponse;
-import com.enigma.wmb_api.entity.Menu;
 import com.enigma.wmb_api.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,19 +25,22 @@ import java.util.List;
 public class MenuController {
     private final MenuService menuService;
 
-    // Create Menu
-    @PostMapping
-    public ResponseEntity<CommonResponse<Menu>> createMenu (
+    // Create Menu Controller
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<MenuResponse>> createMenu(
             @RequestBody PostMenuRequest postMenuRequest
     ) {
-        // Create Menu to Service
-        Menu menu = menuService.create(postMenuRequest);
+        // Menu Response from crate Service
+        MenuResponse menuResponse = menuService.create(postMenuRequest);
 
         // Common Response
-        CommonResponse<Menu> menuCommonResponse = CommonResponse.<Menu>builder()
+        CommonResponse<MenuResponse> menuCommonResponse = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
-                .message("Successfully create menu")
-                .data(menu)
+                .message(ResponseMessage.SUCCESS_SAVE_DATA)
+                .data(menuResponse)
                 .build();
 
         // Response Entity
@@ -44,9 +49,11 @@ public class MenuController {
                 .body(menuCommonResponse);
     }
 
-    // Get All Menu
-    @GetMapping
-    public ResponseEntity<CommonResponse<List<Menu>>> getAllMenu (
+    // Get All Menu Controller
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponsePage<List<MenuResponse>>> getAllMenu(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "price", required = false) Integer price,
             @RequestParam(name = "minPrice", required = false) Integer minPrice,
@@ -68,24 +75,24 @@ public class MenuController {
                 .direction(direction)
                 .build();
 
-        // Get All Menu to Service
-        Page<Menu> menus = menuService.getAll(searchMenuRequest);
+        // Page All Menu Response from getAll Service
+        Page<MenuResponse> menuResponses = menuService.getAll(searchMenuRequest);
 
         // Paging Response for Common Response
         PagingResponse pagingResponse = PagingResponse.builder()
-                .totalPages(menus.getTotalPages())
-                .totalElement(menus.getTotalElements())
-                .page(menus.getPageable().getPageNumber() + 1)
-                .size(menus.getPageable().getPageSize())
-                .hasNext(menus.hasNext())
-                .hasPrevious(menus.hasPrevious())
+                .totalPages(menuResponses.getTotalPages())
+                .totalElement(menuResponses.getTotalElements())
+                .page(menuResponses.getPageable().getPageNumber() + 1)
+                .size(menuResponses.getPageable().getPageSize())
+                .hasNext(menuResponses.hasNext())
+                .hasPrevious(menuResponses.hasPrevious())
                 .build();
 
         // Common Response
-        CommonResponse<List<Menu>> response = CommonResponse.<List<Menu>>builder()
+        CommonResponsePage<List<MenuResponse>> response = CommonResponsePage.<List<MenuResponse>>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Success get all menu")
-                .data(menus.getContent())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(menuResponses .getContent())
                 .paging(pagingResponse)
                 .build();
 
@@ -95,19 +102,22 @@ public class MenuController {
                 .body(response);
     }
 
-    // Get Menu by Id
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<CommonResponse<Menu>> getMenuById(
+    // Get Menu by Id Controller
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<MenuResponse>> getMenuById(
             @PathVariable String id
     ) {
-        // Get Menu by Id to Service
-        Menu menu = menuService.getById(id);
+        // Menu Response from getOneById service
+        MenuResponse menuResponse = menuService.getOneById(id);
 
         // Common Response
-        CommonResponse<Menu> response = CommonResponse.<Menu>builder()
+        CommonResponse<MenuResponse> response = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfully get menu by id")
-                .data(menu)
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(menuResponse)
                 .build();
 
         // Response Entity
@@ -116,19 +126,22 @@ public class MenuController {
                 .body(response);
     }
 
-    // Update Menu
-    @PutMapping
-    public ResponseEntity<CommonResponse<Menu>> updateMenu(
+    // Update Menu Controller
+    @PutMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<MenuResponse>> updateMenu(
             @RequestBody PutMenuRequest putMenuRequest
     ) {
-        // Update Menu to Service
-        Menu menu = menuService.update(putMenuRequest);
+        // Menu Response from update Service
+        MenuResponse menuResponse = menuService.update(putMenuRequest);
 
         // Common Response
-        CommonResponse<Menu> menuCommonResponse = CommonResponse.<Menu>builder()
+        CommonResponse<MenuResponse> menuCommonResponse = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfully edit menu")
-                .data(menu)
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .data(menuResponse)
                 .build();
 
         // Response Entity
@@ -137,19 +150,22 @@ public class MenuController {
                 .body(menuCommonResponse);
     }
 
-    // Delete Menu by Id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Menu>> deleteMenuById(
+    // Delete Menu Controller
+    @DeleteMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<MenuResponse>> deleteMenuById(
             @PathVariable String id
     ) {
 
-        // Delete Menu to Service
+        // Menu Response from delete Service
         menuService.deleteById(id);
 
         // Common Response
-        CommonResponse<Menu> menuCommonResponse = CommonResponse.<Menu>builder()
+        CommonResponse<MenuResponse> menuCommonResponse = CommonResponse.<MenuResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfully delete menu")
+                .message(ResponseMessage.SUCCESS_DELETE_DATA)
                 .build();
 
         // Response Entity
@@ -157,4 +173,5 @@ public class MenuController {
                 .status(HttpStatus.OK)
                 .body(menuCommonResponse);
     }
+
 }
