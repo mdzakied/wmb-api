@@ -44,4 +44,8 @@ public class Bill {
     @JsonManagedReference
     private List<BillDetail> billDetails;
 
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
 }

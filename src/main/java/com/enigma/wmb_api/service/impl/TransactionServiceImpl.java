@@ -4,6 +4,7 @@ import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.constant.TransTypeEnum;
 import com.enigma.wmb_api.dto.request.transaction.PostTransactionRequest;
 import com.enigma.wmb_api.dto.request.transaction.SearchTransactionRequest;
+import com.enigma.wmb_api.dto.response.PaymentResponse;
 import com.enigma.wmb_api.dto.response.transaction.TableTransactionResponse;
 import com.enigma.wmb_api.dto.response.transaction.TransTypeTransactionResponse;
 import com.enigma.wmb_api.dto.response.transaction.TransactionResponse;
@@ -33,11 +34,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
-    private final TransactionDetailRepository transactionDetailRepository;
+    private final TransactionDetailService transactionDetailService;
     private final UserService userService;
     private final TableService tableService;
     private final TransTypeService transTypeService;
-    private final MenuService menuService;
+    private final PaymentService paymentService;
     private final ValidationUtil validationUtil;
 
     // Create Transaction Service
@@ -71,25 +72,22 @@ public class TransactionServiceImpl implements TransactionService {
                 .transType(transType)
                 .build();
 
-        // Create Transaction Detail
+        // Create Transaction Detail from Request
         List<BillDetail> billDetails = postTransactionRequest.getTransactionDetails().stream()
-                .map(billDetail -> {
-                    // Get Menu
-                    Menu menu = menuService.getById(billDetail.getMenuId());
+                .map( postTransactionDetailRequest -> {
+                    // Create Transaction Detail from create service
+                    return transactionDetailService.create(bill, postTransactionDetailRequest);
+                })
+                .toList();
 
-                    // Create Transaction Detail
-                    BillDetail newBillDetail = BillDetail.builder()
-                            .bill(bill)
-                            .menu(menu)
-                            .qty(billDetail.getQty())
-                            .price(billDetail.getQty() * menu.getPrice())
-                            .build();
+        // Set Bill Details
+        bill.setBillDetails(billDetails);
 
-                    // Save to Repository
-                    transactionDetailRepository.saveAndFlush(newBillDetail);
+        // Payment from create service
+        Payment payment = paymentService.createPayment(bill);
 
-                    return newBillDetail;
-                }).toList();
+        // Set Payment
+        bill.setPayment(payment);
 
         // Convert to Transaction Response
         return convertToTransactionResponse(bill, billDetails);
@@ -186,6 +184,14 @@ public class TransactionServiceImpl implements TransactionService {
                 .desc(bill.getTransType().getDescription())
                 .build();
 
+        // Response Payment
+        PaymentResponse paymentResponse = PaymentResponse.builder()
+                .id(bill.getPayment().getId())
+                .token(bill.getPayment().getToken())
+                .redirectUrl(bill.getPayment().getRedirectUrl())
+                .transactionStatus(bill.getPayment().getTransactionStatus())
+                .build();;
+
         // Response Transaction
         return TransactionResponse.builder()
                 .id(bill.getId())
@@ -194,6 +200,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .table(tableTransactionResponse)
                 .transType(transTypeTransactionResponse)
                 .transactionDetails(transactionDetailResponses)
+                .payment(paymentResponse)
                 .build();
     }
 }
