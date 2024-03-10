@@ -45,30 +45,33 @@ public class AuthServiceImpl implements AuthService {
         Optional<UserAccount> currentUser = userAccountRepository.findByUsername(superAdminUsername);
         if (currentUser.isPresent()) return;
 
-        // Create All Role for Superadmin and Check first to create
-        Role superAdmin = roleService.getOrSave(UserRoleEnum.ROLE_SUPER_ADMIN);
-        Role admin = roleService.getOrSave(UserRoleEnum.ROLE_ADMIN);
-        Role customer = roleService.getOrSave(UserRoleEnum.ROLE_CUSTOMER);
+        // Create All Role for Superadmin from service or create
+        Role superAdminRole = roleService.getOrSave(UserRoleEnum.ROLE_SUPER_ADMIN);
+        Role adminRole = roleService.getOrSave(UserRoleEnum.ROLE_ADMIN);
+        Role customerRole = roleService.getOrSave(UserRoleEnum.ROLE_CUSTOMER);
 
         // Create User Account for Superadmin
         UserAccount account = UserAccount.builder()
                 .username(superAdminUsername)
                 // Encode Password
                 .password(passwordEncoder.encode(superAdminPassword))
-                .role(List.of(superAdmin, admin, customer))
+                .role(List.of(superAdminRole, adminRole, customerRole))
                 .isEnable(true)
                 .build();
 
         // Save to Repository
         userAccountRepository.save(account);
     }
+
+    // Create Account User
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse register(AuthRequest request) {
         // Validation request
         validationUtil.validate(request);
 
-        // Get or Save role customer from service
-        Role role = roleService.getOrSave(UserRoleEnum.ROLE_CUSTOMER);
+        // Get role for customer from service or create
+        Role customerRole = roleService.getOrSave(UserRoleEnum.ROLE_CUSTOMER);
 
         // Encode Password
         String hashPassword = passwordEncoder.encode(request.getPassword());
@@ -77,7 +80,54 @@ public class AuthServiceImpl implements AuthService {
         UserAccount account = UserAccount.builder()
                 .username(request.getUsername())
                 .password(hashPassword)
-                .role(List.of(role))
+                .role(List.of(customerRole))
+                .isEnable(true)
+                .build();
+
+        // Save to Repository
+        userAccountRepository.saveAndFlush(account);
+
+        // Create User
+        User user = User.builder()
+                .name(account.getUsername())
+                .userAccount(account)
+                .status(true)
+                .build();
+
+        // Save to Repository
+        userRepository.saveAndFlush(user);
+
+        // Role Register Response
+        List<String> roles = account.getAuthorities().stream().map(
+                GrantedAuthority::getAuthority
+        ).toList();
+
+        // Register Response
+        return RegisterResponse.builder()
+                .username(account.getUsername())
+                .roles(roles)
+                .build();
+    }
+
+    // Create Account Admin
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RegisterResponse registerAdmin(AuthRequest request) {
+        // Validation request
+        validationUtil.validate(request);
+
+        // Get role for admin from service or create
+        Role adminRole = roleService.getOrSave(UserRoleEnum.ROLE_ADMIN);
+        Role customerRole = roleService.getOrSave(UserRoleEnum.ROLE_CUSTOMER);
+
+        // Encode Password
+        String hashPassword = passwordEncoder.encode(request.getPassword());
+
+        // Create User Account
+        UserAccount account = UserAccount.builder()
+                .username(request.getUsername())
+                .password(hashPassword)
+                .role(List.of(adminRole, customerRole))
                 .isEnable(true)
                 .build();
 

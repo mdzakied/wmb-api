@@ -5,4 +5,5 @@ import com.enigma.wmb_api.dto.response.auth.RegisterResponse;
 
 public interface AuthService {
     RegisterResponse register(AuthRequest request);
+    RegisterResponse registerAdmin(AuthRequest request);
 }
