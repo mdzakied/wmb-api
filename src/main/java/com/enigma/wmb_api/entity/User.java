@@ -21,7 +21,14 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
+
+    @Column(name = "status")
+    private Boolean status;
+
+    @OneToOne
+    @JoinColumn(name = "user_acount_id", unique = true)
+    private UserAccount userAccount;
 
 }
