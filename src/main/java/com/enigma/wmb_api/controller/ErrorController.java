@@ -1,6 +1,5 @@
 package com.enigma.wmb_api.controller;
 
-import com.enigma.wmb_api.dto.response.common.CommonResponse;
 import com.enigma.wmb_api.dto.response.common.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,10 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @RestControllerAdvice
 public class ErrorController {

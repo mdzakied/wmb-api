@@ -2,6 +2,7 @@ package com.enigma.wmb_api.service.impl;
 
 import com.enigma.wmb_api.constant.UserRoleEnum;
 import com.enigma.wmb_api.dto.request.AuthRequest;
+import com.enigma.wmb_api.dto.response.auth.LoginResponse;
 import com.enigma.wmb_api.dto.response.auth.RegisterResponse;
 import com.enigma.wmb_api.entity.Role;
 import com.enigma.wmb_api.entity.User;
@@ -9,12 +10,17 @@ import com.enigma.wmb_api.entity.UserAccount;
 import com.enigma.wmb_api.repositry.UserAccountRepository;
 import com.enigma.wmb_api.repositry.UserRepository;
 import com.enigma.wmb_api.service.AuthService;
+import com.enigma.wmb_api.service.JwtService;
 import com.enigma.wmb_api.service.RoleService;
 import com.enigma.wmb_api.util.ValidationUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +36,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ValidationUtil validationUtil;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     // Dependency Inject from environment
     @Value("${enigma_shop.username.superadmin}")
@@ -153,6 +161,35 @@ public class AuthServiceImpl implements AuthService {
         return RegisterResponse.builder()
                 .username(account.getUsername())
                 .roles(roles)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public LoginResponse login(AuthRequest request) {
+        // Create UsernamePasswordAuthenticationToken from request for Authentication
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+          request.getUsername(),
+          request.getPassword()
+        );
+
+        // Authenticate UsernamePasswordAuthenticationToken (Check)
+        Authentication authenticate = authenticationManager.authenticate(authentication);
+
+        // Set data authenticate to SecurityContextHolder (save data user in security context holder)
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        // Create User Account from getPrincipal authenticate (get data authenticate user)
+        UserAccount userAccount = (UserAccount) authenticate.getPrincipal();
+
+        // Create Token JWT from User Account date
+        String token = jwtService.generateToken(userAccount);
+
+        // Login Response
+        return LoginResponse.builder()
+                .username(userAccount.getUsername())
+                .roles(userAccount.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .token(token)
                 .build();
     }
 }
