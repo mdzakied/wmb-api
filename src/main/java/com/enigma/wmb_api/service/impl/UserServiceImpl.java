@@ -5,7 +5,9 @@ import com.enigma.wmb_api.dto.request.user.PutUserRequest;
 import com.enigma.wmb_api.dto.request.user.SearchUserRequest;
 import com.enigma.wmb_api.dto.response.UserResponse;
 import com.enigma.wmb_api.entity.User;
+import com.enigma.wmb_api.entity.UserAccount;
 import com.enigma.wmb_api.repositry.UserRepository;
+import com.enigma.wmb_api.service.UserAccountService;
 import com.enigma.wmb_api.service.UserService;
 import com.enigma.wmb_api.specification.UserSpecification;
 import com.enigma.wmb_api.util.ValidationUtil;
@@ -25,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ValidationUtil validationUtil;
+    private final UserAccountService userAccountService;
 
     // -- Create User from Register User Account --
     @Transactional(rollbackFor = Exception.class)
@@ -89,6 +92,7 @@ public class UserServiceImpl implements UserService {
                 .id(currentUser.getId())
                 .name(putUserRequest.getName())
                 .phoneNumber(putUserRequest.getPhoneNumber())
+                .userAccount(currentUser.getUserAccount())
                 .build();
 
         // Save to Repository
@@ -127,5 +131,39 @@ public class UserServiceImpl implements UserService {
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
                 .build();
+    }
+
+    // Custom method for authorize user getById and delete
+    @Transactional(rollbackFor = Exception.class)
+    public boolean hasAuthoritySelf(String id) {
+        // Find user By Id
+        User currentUser = getById(id);
+
+        // Find User Account from getByContext service
+        UserAccount userAccount = userAccountService.getByContext();
+
+        // Conditional User Account
+        if (!userAccount.getId().equals(currentUser.getUserAccount().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ResponseMessage.ERROR_FORBIDDEN);
+        }
+
+        return true;
+    }
+
+    // Custom method for authorize user update
+    @Transactional(rollbackFor = Exception.class)
+    public boolean hasAuthoritySelf(PutUserRequest payload) {
+        // Find user By Id
+        User currentUser = getById(payload.getId());
+
+        // Find User Account from getByContext service
+        UserAccount userAccount = userAccountService.getByContext();
+
+        // Conditional User Account
+        if (!userAccount.getId().equals(currentUser.getUserAccount().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ResponseMessage.ERROR_FORBIDDEN);
+        }
+
+        return true;
     }
 }
