@@ -106,15 +106,18 @@ public class UserServiceImpl implements UserService {
         return convertToUserResponse(user);
     }
 
-    // Delete User Service
+    // Delete User Service (Soft Delete)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
         // Get by Id
         User user = getById(id);
-        
-        // Delete to Repository
-        userRepository.delete(user);
+
+        // Set status to false
+        user.setStatus(false);
+
+        // Save to Repository
+        userRepository.saveAndFlush(user);
     }
 
     // Find User or Throw Error Service
@@ -154,6 +157,7 @@ public class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
+                .status(user.getStatus())
                 .userAccount(userAccountResponse)
                 .build();
     }

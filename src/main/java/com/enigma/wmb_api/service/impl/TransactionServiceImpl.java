@@ -200,6 +200,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .id(bill.getUser().getId())
                 .name(bill.getUser().getName())
                 .phoneNumber(bill.getUser().getPhoneNumber())
+                .status(bill.getUser().getStatus())
                 .userAccount(userAccountTransactionResponse)
                 .build();
 
