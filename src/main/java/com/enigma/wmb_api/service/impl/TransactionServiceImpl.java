@@ -130,6 +130,22 @@ public class TransactionServiceImpl implements TransactionService {
         return convertToTransactionResponse(bill, billDetails);
     }
 
+    @Override
+    public Page<Bill> getDataAll(SearchTransactionRequest searchTransactionRequest) {
+        // Validate Page
+        if (searchTransactionRequest.getPage() <= 0) searchTransactionRequest.setPage(1);
+        // Sort
+        Sort sort = Sort.by(Sort.Direction.fromString(searchTransactionRequest.getDirection()), searchTransactionRequest.getSortBy());
+        // Pageable
+        Pageable pageable = PageRequest.of(searchTransactionRequest.getPage() - 1, searchTransactionRequest.getSize(), sort);
+        // Specification
+        Specification<Bill> specification = TransactionSpecification.getSpecification(searchTransactionRequest);
+
+        // Find All Bill with Pageable
+        return transactionRepository.findAll(specification, pageable);
+
+    }
+
     // Find Transaction or Throw Error Service
     @Transactional(readOnly = true)
     public Bill findByIdOrThrowNotFound(String id) {

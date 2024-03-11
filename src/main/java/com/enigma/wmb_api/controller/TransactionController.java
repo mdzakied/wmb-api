@@ -9,21 +9,20 @@ import com.enigma.wmb_api.dto.response.common.CommonResponsePage;
 import com.enigma.wmb_api.dto.response.common.PagingResponse;
 import com.enigma.wmb_api.dto.response.transaction.TransactionResponse;
 import com.enigma.wmb_api.entity.Bill;
-import com.enigma.wmb_api.entity.MTable;
-import com.enigma.wmb_api.entity.Menu;
+import com.enigma.wmb_api.repositry.TransactionRepository;
+import com.enigma.wmb_api.service.ExportFileService;
 import com.enigma.wmb_api.service.TransactionService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,9 +30,13 @@ import java.util.List;
 @RequestMapping(path = APIUrl.TRANSACTION_API)
 public class TransactionController {
     private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
+
+    private final ExportFileService exportFileService;
 
     // Create Transaction Controller
-    @Operation(summary = "Public")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -137,5 +140,53 @@ public class TransactionController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @Operation(summary = "Public")
+    @GetMapping("/csv")
+    public ResponseEntity<byte[]> generateCsvFile(
+            @RequestParam(name = "userName", required = false) String userName,
+            @RequestParam(name = "menuName", required = false) String menuName,
+            @RequestParam(name = "transDate", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String transDate,
+            @RequestParam(name = "startTransDate", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String startTransDate,
+            @RequestParam(name = "endTransDate", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String endTransDate,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "transDate") String soryBy,
+            @RequestParam(name = "direction", defaultValue = "desc") String direction
+    ) {
+        // Query Params & Pagination to SearchTransactionRequest
+        SearchTransactionRequest searchTransactionRequest = SearchTransactionRequest.builder()
+                .userName(userName)
+                .menuName(menuName)
+                .transDate(transDate)
+                .startTransDate(startTransDate)
+                .endTransDate(endTransDate)
+                .page(page)
+                .size(size)
+                .sortBy(soryBy)
+                .direction(direction)
+                .build();
+
+        // Page All Transaction Response from getAll Service
+        Page<Bill> transactions = transactionService.getDataAll(searchTransactionRequest);
+
+        // Create Headers
+        HttpHeaders headers = new HttpHeaders();
+        // Set Content Headers
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "transaction.csv");
+
+        // Export data transaction to csvBytes
+        byte[] csvBytes = exportFileService.exportTransactionToCsv(transactions).getBytes();
+
+        // Set Header Value
+        String headerValue = String.format("attachment; filename=%s", headers.getContentDisposition().getFilename());
+
+        // Response Entity
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                .body(csvBytes);
     }
 }

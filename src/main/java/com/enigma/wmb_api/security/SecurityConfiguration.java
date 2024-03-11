@@ -37,6 +37,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         // Permit api auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Permit Download Image
+                        .requestMatchers("/api/menus/images/**").permitAll()
+                        // Permit Export Transaction to Csv
+                        .requestMatchers("/api/transactions/csv").permitAll()
                         // Permit swagger (api docs)
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
