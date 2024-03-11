@@ -11,4 +11,5 @@ public class UserTransactionResponse {
     private String id;
     private String name;
     private String phoneNumber;
+    private UserAccountTransactionResponse userAccount;
 }

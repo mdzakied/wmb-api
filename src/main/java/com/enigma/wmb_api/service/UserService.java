@@ -4,7 +4,7 @@ package com.enigma.wmb_api.service;
 
 import com.enigma.wmb_api.dto.request.user.PutUserRequest;
 import com.enigma.wmb_api.dto.request.user.SearchUserRequest;
-import com.enigma.wmb_api.dto.response.UserResponse;
+import com.enigma.wmb_api.dto.response.user.UserResponse;
 import com.enigma.wmb_api.entity.User;
 import org.springframework.data.domain.Page;
 

@@ -3,7 +3,9 @@ package com.enigma.wmb_api.service.impl;
 import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.dto.request.user.PutUserRequest;
 import com.enigma.wmb_api.dto.request.user.SearchUserRequest;
-import com.enigma.wmb_api.dto.response.UserResponse;
+import com.enigma.wmb_api.dto.response.user.RoleResponse;
+import com.enigma.wmb_api.dto.response.user.UserAccountResponse;
+import com.enigma.wmb_api.dto.response.user.UserResponse;
 import com.enigma.wmb_api.entity.User;
 import com.enigma.wmb_api.entity.UserAccount;
 import com.enigma.wmb_api.repositry.UserRepository;
@@ -21,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -126,10 +130,31 @@ public class UserServiceImpl implements UserService {
 
     // Convert to Response User Service
     public UserResponse convertToUserResponse(User user) {
+
+        // Roles User Account Response
+        List<RoleResponse> roleResponses = user.getUserAccount().getRole().stream().map(
+                roleResponse -> {
+                    return RoleResponse.builder()
+                            .id(roleResponse.getId())
+                            .role(String.valueOf(roleResponse.getRole()))
+                            .build();
+                }
+        ).toList();
+
+        // User Account Response
+        UserAccountResponse userAccountResponse = UserAccountResponse.builder()
+                .id(user.getUserAccount().getId())
+                .username(user.getUserAccount().getUsername())
+                .roles(roleResponses)
+                .isEnable(user.getUserAccount().getIsEnable())
+                .build();
+
+        // User Response
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
+                .userAccount(userAccountResponse)
                 .build();
     }
 

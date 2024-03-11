@@ -1,4 +1,4 @@
-package com.enigma.wmb_api.dto.response;
+package com.enigma.wmb_api.dto.response.user;
 
 import lombok.*;
 
@@ -11,4 +11,5 @@ public class UserResponse {
     private String id;
     private String name;
     private String phoneNumber;
+    private UserAccountResponse userAccount;
 }

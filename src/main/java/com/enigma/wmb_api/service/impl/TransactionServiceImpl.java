@@ -5,12 +5,11 @@ import com.enigma.wmb_api.constant.TransTypeEnum;
 import com.enigma.wmb_api.dto.request.transaction.PostTransactionRequest;
 import com.enigma.wmb_api.dto.request.transaction.SearchTransactionRequest;
 import com.enigma.wmb_api.dto.response.PaymentResponse;
-import com.enigma.wmb_api.dto.response.transaction.TableTransactionResponse;
-import com.enigma.wmb_api.dto.response.transaction.TransTypeTransactionResponse;
-import com.enigma.wmb_api.dto.response.transaction.TransactionResponse;
-import com.enigma.wmb_api.dto.response.transaction.UserTransactionResponse;
+import com.enigma.wmb_api.dto.response.transaction.*;
 import com.enigma.wmb_api.dto.response.transaction_detail.MenuTransactionDetailResponse;
 import com.enigma.wmb_api.dto.response.transaction_detail.TransactionDetailResponse;
+import com.enigma.wmb_api.dto.response.user.RoleResponse;
+import com.enigma.wmb_api.dto.response.user.UserAccountResponse;
 import com.enigma.wmb_api.entity.*;
 import com.enigma.wmb_api.repositry.*;
 import com.enigma.wmb_api.service.*;
@@ -178,11 +177,30 @@ public class TransactionServiceImpl implements TransactionService {
                             .build();
                 }).toList();
 
+        // Roles User Account Response
+        List<RoleTransactionResponse> roleTransactionResponses = bill.getUser().getUserAccount().getRole().stream().map(
+                roleTransactionResponse -> {
+                    return RoleTransactionResponse.builder()
+                            .id(roleTransactionResponse.getId())
+                            .role(String.valueOf(roleTransactionResponse.getRole()))
+                            .build();
+                }
+        ).toList();
+
+        // User Account Response
+        UserAccountTransactionResponse userAccountTransactionResponse = UserAccountTransactionResponse.builder()
+                .id(bill.getUser().getUserAccount().getId())
+                .username(bill.getUser().getUserAccount().getUsername())
+                .roles(roleTransactionResponses)
+                .isEnable(bill.getUser().getUserAccount().getIsEnable())
+                .build();
+
         // Response User Transaction
         UserTransactionResponse userTransactionResponse = UserTransactionResponse.builder()
                 .id(bill.getUser().getId())
                 .name(bill.getUser().getName())
                 .phoneNumber(bill.getUser().getPhoneNumber())
+                .userAccount(userAccountTransactionResponse)
                 .build();
 
         // Response Table Transaction
