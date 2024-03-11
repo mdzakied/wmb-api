@@ -12,17 +12,20 @@ import com.enigma.wmb_api.dto.response.common.PagingResponse;
 import com.enigma.wmb_api.service.MenuService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
 @RequiredArgsConstructor
 @RequestMapping(path = APIUrl.MENU_API)
 public class MenuController {
@@ -30,6 +33,7 @@ public class MenuController {
     private final ObjectMapper objectMapper;
 
     // Create Menu Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -67,6 +71,7 @@ public class MenuController {
     }
 
     // Get All Menu Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -120,6 +125,7 @@ public class MenuController {
     }
 
     // Get Menu by Id Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -144,6 +150,7 @@ public class MenuController {
     }
 
     // Update Menu Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @PutMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -181,6 +188,7 @@ public class MenuController {
     }
 
     // Delete Menu Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @DeleteMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE

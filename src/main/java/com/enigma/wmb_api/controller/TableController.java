@@ -11,22 +11,26 @@ import com.enigma.wmb_api.dto.response.common.CommonResponsePage;
 import com.enigma.wmb_api.dto.response.common.PagingResponse;
 import com.enigma.wmb_api.entity.MTable;
 import com.enigma.wmb_api.service.TableService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
 @RequiredArgsConstructor
 @RequestMapping(path = APIUrl.TABLE_API)
 public class TableController {
     private final TableService tableService;
 
     // Create Table Service
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -52,6 +56,7 @@ public class TableController {
     }
 
     // Get All Table Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -99,6 +104,7 @@ public class TableController {
     }
 
     // Get Table by Id Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -123,6 +129,7 @@ public class TableController {
     }
 
     // Update Table Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -147,6 +154,7 @@ public class TableController {
     }
 
     // Table Controller
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @DeleteMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE

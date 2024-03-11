@@ -11,6 +11,11 @@ import com.enigma.wmb_api.dto.response.common.CommonResponsePage;
 import com.enigma.wmb_api.dto.response.common.PagingResponse;
 import com.enigma.wmb_api.entity.User;
 import com.enigma.wmb_api.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -32,10 +37,11 @@ public class UserController {
     // Get All User Controller
     // Authorize
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin and Admin")
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<CommonResponsePage<List<UserResponse>>> getAllUser (
+    public ResponseEntity<CommonResponsePage<List<UserResponse>>> getAllUser(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -83,6 +89,7 @@ public class UserController {
     // Get User by Id Controller
     // Authorize
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN') or @userServiceImpl.hasAuthoritySelf(#id)")
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin, Admin and Customer itself")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -109,6 +116,7 @@ public class UserController {
     // Update Menu Controller
     // Authorize
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN') or @userServiceImpl.hasAuthoritySelf(#putUserRequest)")
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin, Admin and Customer itself")
     @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -135,6 +143,7 @@ public class UserController {
     // Delete User Controller
     // Authorize
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN') or @userServiceImpl.hasAuthoritySelf(#id)")
+    @Operation(summary = "Private : Have Role Authorization", description = "Role : Superadmin, Admin and Customer itself")
     @DeleteMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
