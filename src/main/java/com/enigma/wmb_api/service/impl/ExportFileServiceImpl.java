@@ -41,7 +41,7 @@ public class ExportFileServiceImpl implements ExportFileService {
                                         // Table
                                         .append(table).append(",")
                                         // Trans Type
-                                        .append(bill.getTransType()).append(",")
+                                        .append(bill.getTransType().getTransTypeEnum().name()).append(",")
                                         // Trans Detail
                                         .append(billDetail.getId()).append(",")
                                         // Menu
