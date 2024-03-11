@@ -140,10 +140,16 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void deleteById(String id) {
         // Get by Id
-        Menu menu = getById(id);
+        Menu currentMenu = getById(id);
+
+        // Conditional Edit Menu -> Image
+        if (currentMenu.getImage() != null) {
+            // Delete Current Image
+            imageService.deleteById(currentMenu.getImage().getId());
+        }
 
         // Delete to Repository
-        menuRepository.delete(menu);
+        menuRepository.delete(currentMenu);
     }
 
     // Find Menu or Throw Error Service
