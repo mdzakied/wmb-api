@@ -111,13 +111,13 @@ public class MenuServiceImpl implements MenuService {
         Menu currentMenu = getById(putMenuRequest.getId());
 
         // Conditional Edit Menu -> Image
-        Image image = currentMenu.getImage();
+        Image image = null;
         if (putMenuRequest.getImage() != null && !putMenuRequest.getImage().isEmpty()) {
+            // Delete Current Image
+            if (currentMenu.getImage() != null)  imageService.deleteById(currentMenu.getImage().getId());
+
             // Create Image
             image = imageService.create(putMenuRequest.getImage());
-
-            // Delete Current Image
-            imageService.deleteById(currentMenu.getImage().getId());
         }
 
         // Create Menu
