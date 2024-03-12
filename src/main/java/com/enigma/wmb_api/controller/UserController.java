@@ -123,14 +123,14 @@ public class UserController {
 
         // Common Response
         CommonResponse<UserResponse> userCommonResponse = CommonResponse.<UserResponse>builder()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .data(userResponse)
                 .build();
 
         // Response Entity
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(userCommonResponse);
     }
 

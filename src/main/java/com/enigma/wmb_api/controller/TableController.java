@@ -142,14 +142,14 @@ public class TableController {
 
         // Common Response
         CommonResponse<TableResponse> tableCommonResponse = CommonResponse.<TableResponse>builder()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.CREATED.value())
                 .message(ResponseMessage.SUCCESS_UPDATE_DATA)
                 .data(table)
                 .build();
 
         // Response Entity
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(tableCommonResponse);
     }
 
