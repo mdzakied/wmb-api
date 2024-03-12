@@ -1,7 +1,6 @@
 package com.enigma.wmb_api.service.impl;
 
 import com.enigma.wmb_api.entity.Bill;
-import com.enigma.wmb_api.entity.BillDetail;
 import com.enigma.wmb_api.service.ExportFileService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Service
@@ -82,13 +82,17 @@ public class ExportFileServiceImpl implements ExportFileService {
 
         try {
 
-            PdfPTable table = new PdfPTable(13);
+            PdfPTable table = new PdfPTable(14);
             table.setWidthPercentage(80);
-            table.setWidths(new int[]{3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3});
+            table.setWidths(new int[]{3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3});
 
             Font headFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8f);
 
             PdfPCell hcell;
+
+            hcell = new PdfPCell(new Phrase("No", headFont));
+            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(hcell);
 
             hcell = new PdfPCell(new Phrase("Id Trans", headFont));
             hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -142,6 +146,9 @@ public class ExportFileServiceImpl implements ExportFileService {
             hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(hcell);
 
+            // No
+            AtomicInteger columnIndex = new AtomicInteger(1);
+
             bills.forEach(
                     bill -> {
 
@@ -156,6 +163,12 @@ public class ExportFileServiceImpl implements ExportFileService {
                         bill.getBillDetails().forEach(
                                 billDetail -> {
                                     PdfPCell cell;
+
+                                    // No
+                                    cell = new PdfPCell(new Phrase(String.valueOf(columnIndex)));
+                                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                    table.addCell(cell);
 
                                     // Transaction
                                     cell = new PdfPCell(new Phrase(billDetail.getBill().getId()));
@@ -229,7 +242,10 @@ public class ExportFileServiceImpl implements ExportFileService {
                                     cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                     table.addCell(cell);
+
+                                    columnIndex.getAndIncrement();
                                 }
+
                         );
                     }
             );
