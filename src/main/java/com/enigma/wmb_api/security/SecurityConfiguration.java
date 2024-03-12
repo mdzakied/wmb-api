@@ -39,8 +39,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/auth/**").permitAll()
                         // Permit Download Image
                         .requestMatchers("/api/menus/images/**").permitAll()
-                        // Permit Export Transaction to Csv
-                        .requestMatchers("/api/transactions/csv").permitAll()
+                        // Permit Export Transaction to File
+                        //.requestMatchers("/api/transactions/**").permitAll()
                         // Permit swagger (api docs)
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
