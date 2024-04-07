@@ -1,0 +1,1006 @@
+{
+	"info": {
+		"_postman_id": "e8bf07c7-b217-455e-a07e-298e6646407f",
+		"name": "WMB API",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) in \"Tests\" to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17248899"
+	},
+	"item": [
+		{
+			"name": "menu",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "menu",
+									"value": "{\n     \"name\": \"Nasi Merahw2\",\n     \"price\" : 2000\n}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1eedddd6-cc36-4640-9854-2e3030ab573c"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/menus",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"menus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/menus",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"menus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTM4NDc0LCJleHAiOjE3MTAxNDgzNzQsImlzcyI6IldNQiBBUEkifQ.TJOdqGTFox93WAkboBaeE17eL3n1rhYN-De1OdQyHvEkT0IK9jQ7d6tDVqhezw-vRTMRVm3cJOO9Pry0Z-synw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/menus/285d81c5-067e-4216-bb45-96b9736424de",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"menus",
+								"285d81c5-067e-4216-bb45-96b9736424de"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get with Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/menus",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"menus"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "nAsI kuNING",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "10000",
+									"disabled": true
+								},
+								{
+									"key": "minPrice",
+									"value": "10000",
+									"disabled": true
+								},
+								{
+									"key": "maxPrice",
+									"value": "20000",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "price",
+									"disabled": true
+								},
+								{
+									"key": "direction",
+									"value": "desc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "menu",
+									"value": "{\n    \"id\": \"baf483e5-fb84-4b59-8674-6830caff2d6f\",\n    \"name\": \"nasi edit\",\n    \"price\": 2\n}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1eedddd6-cc36-4640-9854-2e3030ab573c"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/menus",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"menus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTM4NDc0LCJleHAiOjE3MTAxNDgzNzQsImlzcyI6IldNQiBBUEkifQ.TJOdqGTFox93WAkboBaeE17eL3n1rhYN-De1OdQyHvEkT0IK9jQ7d6tDVqhezw-vRTMRVm3cJOO9Pry0Z-synw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/menus/285d81c5-067e-4216-bb45-96b9736424de",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"menus",
+								"285d81c5-067e-4216-bb45-96b9736424de"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "table",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"T99\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tables",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tables"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tables",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tables"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tables/ecbcdfd9-a512-410e-ba39-046fe804d86f",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tables",
+								"ecbcdfd9-a512-410e-ba39-046fe804d86f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get with Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tables",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tables"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "price",
+									"disabled": true
+								},
+								{
+									"key": "direction",
+									"value": "desc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"e414fe74-5ff3-4442-8535-7aeb47c74c02\",\r\n    \"name\": \"88\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tables",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tables"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tables/09a93196-f649-4be1-a82a-772ce6fa4b2b",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tables",
+								"09a93196-f649-4be1-a82a-772ce6fa4b2b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTYyMDg0LCJleHAiOjE3MTAxNzE5ODQsImlzcyI6IldNQiBBUEkifQ.9QnGU2RQMO-KGA7iYV1G5e6Pm-kbzjDruZqJY81IWwf9ixcJAmr-ShwMmkqvb3XYSaRXtU37QZ22Dt_50ZBi0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/0ebd43b3-4027-4891-80cc-6277fb8caba5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"0ebd43b3-4027-4891-80cc-6277fb8caba5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get with Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "kadiR",
+									"disabled": true
+								},
+								{
+									"key": "phoneNumber",
+									"value": "81",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "phoneNumber",
+									"disabled": true
+								},
+								{
+									"key": "direction",
+									"value": "desc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjE2NjI3LCJleHAiOjE3MTAyMjY1MjcsImlzcyI6IldNQiBBUEkifQ.ZsyYujzh_xdd6jxCfbm6NEC4bOe7ZnVpEoVvdaXBRbGlFItp31DvxRyT3CDt-F5Ciy07BdhF3pdbiK70VTaRzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"a0172e6e-caef-45cf-9434-6a500a397037\",\r\n    \"name\": \"Dzaki Eddited\",\r\n    \"phoneNumber\": \"089\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTYyMDg0LCJleHAiOjE3MTAxNzE5ODQsImlzcyI6IldNQiBBUEkifQ.9QnGU2RQMO-KGA7iYV1G5e6Pm-kbzjDruZqJY81IWwf9ixcJAmr-ShwMmkqvb3XYSaRXtU37QZ22Dt_50ZBi0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/2a860e48-6a73-4c85-9ad2-bbba21c5b2b0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"2a860e48-6a73-4c85-9ad2-bbba21c5b2b0"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transaction",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTI2OTQ3LCJleHAiOjE3MTAxMzY4NDcsImlzcyI6IldNQiBBUEkifQ.xBx_DwmJrktZy39uMJbTKmjT4_4JUrP1_n5kyqqz10t37NXZqY2B8Q1MGvBCH6hFAmyItgLzoTDK06jZ8ktwMg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"a0172e6e-caef-45cf-9434-6a500a397037\",\r\n  //\"tableId\": \"ecbcdfd9-a512-410e-ba39-046fe804d86f\",\r\n  \"transactionDetails\": [\r\n    {\r\n      \"menuId\": \"c391f1a8-cf2f-4156-8213-49c68ac96229\",\r\n      \"qty\": 2\r\n    },\r\n        {\r\n      \"menuId\": \"31983cac-53a2-4686-be3e-6975d46e192c\",\r\n      \"qty\": 1\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTYyMDg0LCJleHAiOjE3MTAxNzE5ODQsImlzcyI6IldNQiBBUEkifQ.9QnGU2RQMO-KGA7iYV1G5e6Pm-kbzjDruZqJY81IWwf9ixcJAmr-ShwMmkqvb3XYSaRXtU37QZ22Dt_50ZBi0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/ec8dad48-f5a4-483c-b43a-b9f57fd0c306",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"ec8dad48-f5a4-483c-b43a-b9f57fd0c306"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get with Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "AdINDa",
+									"disabled": true
+								},
+								{
+									"key": "menuName",
+									"value": "Aneka Gorengan",
+									"disabled": true
+								},
+								{
+									"key": "transDate",
+									"value": "2024-01-01",
+									"disabled": true
+								},
+								{
+									"key": "startTransDate",
+									"value": "2024-03-02",
+									"disabled": true
+								},
+								{
+									"key": "endTransDate",
+									"value": "2024-03-07",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "user",
+									"disabled": true
+								},
+								{
+									"key": "direction",
+									"value": "asc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export To CSV with Filter",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMjQ1OTI1LCJleHAiOjE3MTAyNTU4MjUsImlzcyI6IldNQiBBUEkifQ.gx35bZDtlx4epRVlBJ9eA0iZ5WWTL4ekVEigbICi3ERQxP6wB0863ATaPYiCbHV2ov92oF_9MmOSePHjygJkbw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/csv",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"csv"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "AdINDa",
+									"disabled": true
+								},
+								{
+									"key": "menuName",
+									"value": "Aneka Gorengan",
+									"disabled": true
+								},
+								{
+									"key": "transDate",
+									"value": "2024-03-10",
+									"disabled": true
+								},
+								{
+									"key": "startTransDate",
+									"value": "2024-03-02",
+									"disabled": true
+								},
+								{
+									"key": "endTransDate",
+									"value": "2024-03-07",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "user",
+									"disabled": true
+								},
+								{
+									"key": "direction",
+									"value": "asc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export To PDF with Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/csv",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"csv"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "AdINDa",
+									"disabled": true
+								},
+								{
+									"key": "menuName",
+									"value": "Aneka Gorengan",
+									"disabled": true
+								},
+								{
+									"key": "transDate",
+									"value": "2024-03-10",
+									"disabled": true
+								},
+								{
+									"key": "startTransDate",
+									"value": "2024-03-02",
+									"disabled": true
+								},
+								{
+									"key": "endTransDate",
+									"value": "2024-03-07",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "user",
+									"disabled": true
+								},
+								{
+									"key": "direction",
+									"value": "asc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Cahyo2\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Zjg4NjZiNS1iOThkLTRmNzEtYjMwNC04MjM5YWM1NTIyN2UiLCJyb2xlcyI6WyJST0xFX1NVUEVSX0FETUlOIiwiUk9MRV9BRE1JTiIsIlJPTEVfQ1VTVE9NRVIiXSwiaWF0IjoxNzEwMTM4NDc0LCJleHAiOjE3MTAxNDgzNzQsImlzcyI6IldNQiBBUEkifQ.TJOdqGTFox93WAkboBaeE17eL3n1rhYN-De1OdQyHvEkT0IK9jQ7d6tDVqhezw-vRTMRVm3cJOO9Pry0Z-synw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Admin12\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register/admin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"superadmin\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
