@@ -153,3 +153,4 @@ Technologies used in the project :
 *   Java JWT
 *   Itextpdf
 *   Spring Doc OpenAPI Starter Webmvc UI
+*   Postman
