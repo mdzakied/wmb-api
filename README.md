@@ -118,7 +118,21 @@ Run in [WmbApiApplication](src/main/java/com/enigma/wmb_api/WmbApiApplication.ja
   ```
   java -jar target/wmb_api-0.0.1-SNAPSHOT.jar
   ```
+
+<h2>📃 Docs API</h2>
+
+Sweagger UI :
+
+* Run Project
+* [Open Swagger Ui in Localhost](http://localhost:8080/swagger-ui/index.html)
+* Login in Api [ /api/auth/login ] with username "superadmin" and password "password"
+* Insert Authorize with bearer token
   
+Postman :
+* Run Project
+* Open Postman and Import [WMB API.postman_collection.json](src/main/resources/docs)
+* Login in Folder Auth Api Login with username "superadmin" and password "password"
+* Insert Authorize with bearer token in another API
   
 <h2>💻 Built with</h2>
 
