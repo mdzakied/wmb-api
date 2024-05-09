@@ -28,9 +28,9 @@ public class JwtServiceImpl implements JwtService {
 
     // Dependency Inject from environment
     public JwtServiceImpl(
-            @Value("${enigma_shop.jwt.secret_key}") String jwtSecret,
-            @Value("${enigma_shop.jwt.issuer}") String issuer,
-            @Value("${enigma_shop.jwt.expirationInSecond}") long expiration
+            @Value("${wmb_api.jwt.secret_key}") String jwtSecret,
+            @Value("${wmb_api.jwt.issuer}") String issuer,
+            @Value("${wmb_api.jwt.expirationInSecond}") long expiration
     ) {
         JWT_SECRET = jwtSecret;
         ISSUER = issuer;

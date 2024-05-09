@@ -112,10 +112,13 @@ public class MenuServiceImpl implements MenuService {
 
         // Conditional Edit Menu -> Image
         Image image = null;
-        if (putMenuRequest.getImage() != null && !putMenuRequest.getImage().isEmpty()) {
-            // Delete Current Image
-            if (currentMenu.getImage() != null)  imageService.deleteById(currentMenu.getImage().getId());
+        String currentImgId = null;
 
+        // Set Current Menu for Edit without Img
+        if (currentMenu.getImage() != null) currentImgId = currentMenu.getImage().getId();
+
+        // Create Image for Edit with Img
+        if (putMenuRequest.getImage() != null) {
             // Create Image
             image = imageService.create(putMenuRequest.getImage());
         }
@@ -125,11 +128,22 @@ public class MenuServiceImpl implements MenuService {
                 .id(currentMenu.getId())
                 .name(putMenuRequest.getName())
                 .price(putMenuRequest.getPrice())
-                .image(image)
                 .build();
+
+        // Conditional Edit Image
+        if (currentMenu.getImage() != null && putMenuRequest.getImage() == null) {
+            menu.setImage(currentMenu.getImage());
+        } else {
+            menu.setImage(image);
+        }
 
         // Save to Repository
         menuRepository.saveAndFlush(menu);
+
+        // Conditional Replace Image
+        if (currentImgId != null && putMenuRequest.getImage() != null) {
+            imageService.deleteById(currentImgId);
+        }
 
         // Convert to Menu Response
         return convertToMenuResponse(menu);

@@ -12,6 +12,7 @@ import com.enigma.wmb_api.repositry.UserRepository;
 import com.enigma.wmb_api.service.AuthService;
 import com.enigma.wmb_api.service.JwtService;
 import com.enigma.wmb_api.service.RoleService;
+import com.enigma.wmb_api.service.UserService;
 import com.enigma.wmb_api.util.ValidationUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,9 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     // Dependency Inject from environment
-    @Value("${enigma_shop.username.superadmin}")
+    @Value("${wmb_api.username.superadmin}")
     private String superAdminUsername;
-    @Value("${enigma_shop.password.superadmin}")
+    @Value("${wmb_api.password.superadmin}")
     private String superAdminPassword;
 
     // Auto Create Account SuperAdmin
@@ -69,9 +70,19 @@ public class AuthServiceImpl implements AuthService {
 
         // Save to Repository
         userAccountRepository.save(account);
+
+        // Create User
+        User user = User.builder()
+                .name(account.getUsername())
+                .userAccount(account)
+                .status(true)
+                .build();
+
+        // Save to Repository
+        userRepository.saveAndFlush(user);
     }
 
-    // Create Account User
+    // Create Account Customer
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RegisterResponse register(AuthRequest request) {
@@ -164,13 +175,14 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    // Login
     @Transactional(readOnly = true)
     @Override
     public LoginResponse login(AuthRequest request) {
         // Create UsernamePasswordAuthenticationToken from request for Authentication
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-          request.getUsername(),
-          request.getPassword()
+                request.getUsername(),
+                request.getPassword()
         );
 
         // Authenticate UsernamePasswordAuthenticationToken (Check)
@@ -187,9 +199,24 @@ public class AuthServiceImpl implements AuthService {
 
         // Login Response
         return LoginResponse.builder()
+                .id(userAccount.getId())
                 .username(userAccount.getUsername())
                 .roles(userAccount.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .token(token)
+                .isEnabled(userAccount.isEnabled())
                 .build();
+    }
+
+    // Validate Token
+    @Override
+    public boolean validateToken() {
+        // get authentication data from security context holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // check user account by username from authentication
+        UserAccount userAccount = userAccountRepository.findByUsername(authentication.getPrincipal().toString())
+                .orElse(null);
+
+        return userAccount != null;
     }
 }

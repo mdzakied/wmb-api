@@ -47,4 +47,17 @@ public class UserAccountServiceImpl implements UserAccountService {
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_USER_NOT_FOUND));
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public void deleteById(String id) {
+        // Get By Id
+        UserAccount userAccount = getByUserId(id);
+
+        // Set status to false
+        userAccount.setIsEnable(false);
+
+        // Set to
+        userAccountRepository.saveAndFlush(userAccount);
+    }
 }

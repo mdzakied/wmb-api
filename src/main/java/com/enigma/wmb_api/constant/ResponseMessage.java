@@ -12,4 +12,6 @@ public class ResponseMessage {
     public static final String INVALID_CONTENT_TYPE = "invalid content type";
     public static final String SUCCESS_LOGIN = "login successfully";
     public static final String ERROR_USER_NOT_FOUND = "user not found";
+    public static final String VALID_JWT_TOKEN = "jwt is valid";
+    public static final String INVALID_JWT_TOKEN = "invalid jwt";
 }

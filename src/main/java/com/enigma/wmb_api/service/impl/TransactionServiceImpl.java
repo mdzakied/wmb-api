@@ -1,9 +1,11 @@
 package com.enigma.wmb_api.service.impl;
 
+import com.enigma.wmb_api.constant.APIUrl;
 import com.enigma.wmb_api.constant.ResponseMessage;
 import com.enigma.wmb_api.constant.TransTypeEnum;
 import com.enigma.wmb_api.dto.request.transaction.PostTransactionRequest;
 import com.enigma.wmb_api.dto.request.transaction.SearchTransactionRequest;
+import com.enigma.wmb_api.dto.response.ImageResponse;
 import com.enigma.wmb_api.dto.response.PaymentResponse;
 import com.enigma.wmb_api.dto.response.transaction.*;
 import com.enigma.wmb_api.dto.response.transaction_detail.MenuTransactionDetailResponse;
@@ -161,11 +163,21 @@ public class TransactionServiceImpl implements TransactionService {
         // Response Transaction Detail
         List<TransactionDetailResponse> transactionDetailResponses = billDetails.stream()
                 .map(billDetail -> {
+                    // Response Image in Menu Transaction Detail
+                    ImageResponse imageResponse = null;
+                    if (billDetail.getMenu().getImage() != null) {
+                        imageResponse = ImageResponse.builder()
+                                .url(APIUrl.PRODUCT_IMAGE_DOWNLOAD_API + billDetail.getMenu().getImage().getId())
+                                .name(billDetail.getMenu().getImage().getName())
+                                .build();
+                    }
+
                     // Response Menu Transaction Detail
                     MenuTransactionDetailResponse menuTransactionDetailResponse = MenuTransactionDetailResponse.builder()
                             .id(billDetail.getMenu().getId())
                             .name(billDetail.getMenu().getName())
                             .price(billDetail.getMenu().getPrice())
+                            .image(imageResponse)
                             .build();
 
                     // Response Transaction Detail

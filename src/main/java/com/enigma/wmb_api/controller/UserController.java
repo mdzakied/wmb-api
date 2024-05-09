@@ -40,8 +40,8 @@ public class UserController {
             @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
-            @RequestParam(name = "sortBy", defaultValue = "name") String soryBy,
-            @RequestParam(name = "direction", defaultValue = "asc") String direction
+            @RequestParam(name = "sortBy", defaultValue = "status") String soryBy,
+            @RequestParam(name = "direction", defaultValue = "desc") String direction
     ) {
         // Query Params & Pagination to SearchUserRequest
         SearchUserRequest searchUserRequest = SearchUserRequest.builder()

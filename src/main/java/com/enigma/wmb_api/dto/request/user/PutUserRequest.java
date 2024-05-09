@@ -18,7 +18,8 @@ public class PutUserRequest {
     @NotBlank(message = "name can't be blank")
     private String name;
 
-    @NotNull(message = "phone number is required")
-    @NotBlank(message = "phone number can't be blank")
     private String phoneNumber;
+
+    @NotNull(message = "phone number is required")
+    private Boolean status;
 }

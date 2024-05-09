@@ -8,6 +8,7 @@ import com.enigma.wmb_api.dto.response.user.UserAccountResponse;
 import com.enigma.wmb_api.dto.response.user.UserResponse;
 import com.enigma.wmb_api.entity.User;
 import com.enigma.wmb_api.entity.UserAccount;
+import com.enigma.wmb_api.repositry.UserAccountRepository;
 import com.enigma.wmb_api.repositry.UserRepository;
 import com.enigma.wmb_api.service.UserAccountService;
 import com.enigma.wmb_api.service.UserService;
@@ -96,6 +97,7 @@ public class UserServiceImpl implements UserService {
                 .id(currentUser.getId())
                 .name(putUserRequest.getName())
                 .phoneNumber(putUserRequest.getPhoneNumber())
+                .status(putUserRequest.getStatus())
                 .userAccount(currentUser.getUserAccount())
                 .build();
 
@@ -106,7 +108,7 @@ public class UserServiceImpl implements UserService {
         return convertToUserResponse(user);
     }
 
-    // Delete User Service (Soft Delete)
+    // Delete User Service (Soft Delete and Delete User Account)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(String id) {
@@ -118,6 +120,9 @@ public class UserServiceImpl implements UserService {
 
         // Save to Repository
         userRepository.saveAndFlush(user);
+
+        // Soft Delete User Account
+        userAccountService.deleteById(user.getUserAccount().getId());
     }
 
     // Find User or Throw Error Service
@@ -162,7 +167,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    // Custom method for authorize user getById and delete
+    // Custom method for authorize user getById
     @Transactional(rollbackFor = Exception.class)
     public boolean hasAuthoritySelf(String id) {
         // Find user By Id

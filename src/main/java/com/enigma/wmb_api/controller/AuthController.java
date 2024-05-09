@@ -6,6 +6,7 @@ import com.enigma.wmb_api.dto.request.AuthRequest;
 import com.enigma.wmb_api.dto.response.auth.LoginResponse;
 import com.enigma.wmb_api.dto.response.auth.RegisterResponse;
 import com.enigma.wmb_api.dto.response.common.CommonResponse;
+import com.enigma.wmb_api.dto.response.common.ErrorResponse;
 import com.enigma.wmb_api.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,10 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(path = APIUrl.AUTH_API)
@@ -91,4 +91,22 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(path = "validate-token", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> validateToken() {
+        boolean valid = authService.validateToken();
+        if (valid) {
+            CommonResponse<String> response = CommonResponse.<String>builder()
+                    .statusCode(HttpStatus.OK.value())
+                    .message(ResponseMessage.VALID_JWT_TOKEN)
+                    .build();
+            return ResponseEntity.ok(response);
+        } else {
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .timestamp(String.valueOf(LocalDateTime.now()))
+                    .statusCode(HttpStatus.UNAUTHORIZED.value())
+                    .message(ResponseMessage.INVALID_JWT_TOKEN)
+                    .build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+    }
 }
