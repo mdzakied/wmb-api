@@ -1,7 +1,7 @@
-<h1 align="center" id="title">wmb-api</h1>
+<h1 align="center" id="title">springboot-wmb-backend</h1>
 
 
-<p align="center" id="description">wmb-api is a demo rest api for managing data resto 'warung makan bahari'.</p>
+<p align="center" id="description">Demo rest api for managing data resto 'warung makan bahari'.</p>
 
 
 <h2>🧐 Features</h2>
